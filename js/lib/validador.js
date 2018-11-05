@@ -43,6 +43,7 @@ $('#localStorageForm')
 
   // Manejo del boton agregar respuesta
   .on('click', '.botonBorrarRespuesta', function() {
+    
     var $row = $(this).parents('.form-group'),
       $option = $row.find('[name="option[]"]');
 

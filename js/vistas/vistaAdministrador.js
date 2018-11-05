@@ -20,6 +20,10 @@ var VistaAdministrador = function(modelo, controlador, elementos) {
     contexto.reconstruirLista();
   });
 
+  this.modelo.preguntaGuardada.suscribir(function() {
+    contexto.reconstruirLista();
+  })
+
 };
 
 
@@ -63,6 +67,7 @@ VistaAdministrador.prototype = {
 
     //asociacion de eventos a boton
     e.botonAgregarPregunta.click(function() {
+      var guardar = this.innerText;
       var value = e.pregunta.val();
       var respuestas = [];
 
@@ -74,9 +79,19 @@ VistaAdministrador.prototype = {
           respuestas.push(respuesta);
         }
       })
-      contexto.limpiarFormulario();
-      contexto.controlador.agregarPregunta(value, respuestas);
       
+      if(guardar=='Guardar Pregunta') {
+        var id = e.pregunta.attr('data-id');
+        this.innerText = 'Agregar Pregunta'
+        e.pregunta.removeAttr('data-id');
+        contexto.controlador.guardarPregunta(value, respuestas, id)
+      } else {
+        if(value) {
+          contexto.controlador.agregarPregunta(value, respuestas);
+        }
+      }
+      
+      contexto.limpiarFormulario();
     });
     //asociar el resto de los botones a eventos
 
@@ -96,11 +111,37 @@ VistaAdministrador.prototype = {
     // editar pregunta
     e.botonEditarPregunta.click(function() {
       var id = parseInt($('.list-group-item.active').attr('id'));
-      var preguntaEditada = prompt('Editar pregunta: ');
-      if(preguntaEditada) {
-        contexto.controlador.editarPregunta(id, preguntaEditada);
+      var preguntas = contexto.controlador.obtenerPreguntas();
+      var pregunta = preguntas.find(item => item.id == id);
+      e.pregunta[0].value = pregunta.textoPregunta;
+      e.pregunta[0].setAttribute('data-id', id);
+      var respuestas = pregunta.cantidadPorRespuesta;
+      contexto.elementos.respuesta.find('[name="option[]"]').remove();
+      for (var i=0;i<respuestas.length;++i){
+        var elem = contexto.construirElementoRespuesta(respuestas[i])[0];
+        contexto.elementos.respuesta.after(elem);
       }
+      e.botonAgregarPregunta[0].innerText = 'Guardar Pregunta'
     })
+  },
+
+  construirElementoRespuesta: function(respuesta) {
+    var nuevoItem;
+    //completar
+    nuevoItem = $(`<div class="form-group answer has-feedback has-success"></div>`);
+    var input = $(`<input class="form-control" type="text" name="option[]" data-fv-field="option[]" value="${respuesta.textoRespuesta}" />`);
+    var i = $(`<i class="form-control-feedback glyphicon glyphicon-ok" data-fv-icon-for="option[]" style=""></i>`);
+    var button = $(`<button type="button" class="btn btn-default botonBorrarRespuesta"><i class="fa fa-minus"></i></button>`);
+    var validacion1 = $(`<small class="help-block" data-fv-validator="notEmpty" data-fv-for="option[]" data-fv-result="VALID" style="display: none;">La respuesta no puede ser vacía</small>`);
+    var validacion2 = $(`<small class="help-block" data-fv-validator="stringLength" data-fv-for="option[]" data-fv-result="VALID" style="display: none;">La respuesta debe tener menos de 100 caracteres</small>`);
+    
+    nuevoItem.append(input);
+    // nuevoItem.append(i);
+    nuevoItem.append(button);
+    nuevoItem.append(validacion1);
+    nuevoItem.append(validacion2);
+    
+    return nuevoItem;
   },
 
   limpiarFormulario: function(){

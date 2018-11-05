@@ -11,6 +11,11 @@ Controlador.prototype = {
       this.modelo.guardarEnLocalStorage();
   },
 
+  guardarPregunta: function(pregunta, respuestas, id) {
+    this.modelo.guardarPregunta(pregunta, respuestas, id);
+    this.modelo.guardarEnLocalStorage();
+  },
+
   borrarPregunta: function(idPregunta) {
     this.modelo.borrarPregunta(idPregunta);
     this.modelo.guardarEnLocalStorage();
@@ -33,5 +38,9 @@ Controlador.prototype = {
 
   observableNotificar: function() {
     this.modelo.observableNotificar();
+  },
+
+  obtenerPreguntas: function() {
+    return this.modelo.preguntas;
   }
 };

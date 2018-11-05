@@ -90,6 +90,7 @@ VistaUsuario.prototype = {
         }
       });
       this.reconstruirGrafico();
+      $('#nombreUsuario')[0].value = ''
 
   },
 
