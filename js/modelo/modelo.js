@@ -56,8 +56,12 @@ Modelo.prototype = {
   },
 
   leerLocalStorage: function() {
-    var preguntasLocales = JSON.parse(localStorage.getItem('preguntas'));
-    this.preguntas = preguntasLocales;
+    var store = localStorage.getItem('preguntas');
+    if(store) {
+      var preguntasLocales = JSON.parse(store);
+      this.preguntas = preguntasLocales || [];
+    }
+    
   },
 
   editarPregunta: function(idPregunta, pregEditada) {

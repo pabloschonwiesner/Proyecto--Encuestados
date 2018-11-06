@@ -111,17 +111,19 @@ VistaAdministrador.prototype = {
     // editar pregunta
     e.botonEditarPregunta.click(function() {
       var id = parseInt($('.list-group-item.active').attr('id'));
-      var preguntas = contexto.controlador.obtenerPreguntas();
-      var pregunta = preguntas.find(item => item.id == id);
-      e.pregunta[0].value = pregunta.textoPregunta;
-      e.pregunta[0].setAttribute('data-id', id);
-      var respuestas = pregunta.cantidadPorRespuesta;
-      contexto.elementos.respuesta.find('[name="option[]"]').remove();
-      for (var i=0;i<respuestas.length;++i){
-        var elem = contexto.construirElementoRespuesta(respuestas[i])[0];
-        contexto.elementos.respuesta.after(elem);
-      }
-      e.botonAgregarPregunta[0].innerText = 'Guardar Pregunta'
+      if(id) {
+        var preguntas = contexto.controlador.obtenerPreguntas();
+        var pregunta = preguntas.find(item => item.id == id);
+        e.pregunta[0].value = pregunta.textoPregunta;
+        e.pregunta[0].setAttribute('data-id', id);
+        var respuestas = pregunta.cantidadPorRespuesta;
+        contexto.elementos.respuesta.find('[name="option[]"]').remove();
+        for (var i=0;i<respuestas.length;++i){
+          var elem = contexto.construirElementoRespuesta(respuestas[i])[0];
+          contexto.elementos.respuesta.after(elem);
+        }
+        e.botonAgregarPregunta[0].innerText = 'Guardar Pregunta'
+      }      
     })
   },
 
